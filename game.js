@@ -244,27 +244,43 @@ class TypingGame {
             wordsContainer.removeChild(wordsContainer.firstChild);
         }
         
-        // Reset input
+        // Reset and hide input
         const input = document.getElementById('word-input');
         input.value = '';
         
         // Reset stats display
         document.getElementById('score').textContent = 'Score: 0';
         document.getElementById('lives').textContent = 'Lives: 3';
+        
+        // Hide game area completely
+        document.getElementById('game-area').classList.add('hidden');
+        
+        // Remove any remaining game over screen
+        const gameOverScreen = document.querySelector('.game-over');
+        if (gameOverScreen) {
+            gameOverScreen.remove();
+        }
     }
 
     goBack() {
-        if (this.isPlaying) {
-            this.cleanupGame();
-        }
+        this.cleanupGame();
         
+        // Hide all sections first
         document.querySelectorAll('.section').forEach(section => {
             section.classList.add('hidden');
             section.classList.remove('active');
         });
         
-        document.getElementById('menu').classList.remove('hidden');
-        document.getElementById('menu').classList.add('active');
+        // Show and activate menu
+        const menu = document.getElementById('menu');
+        menu.classList.remove('hidden');
+        menu.classList.add('active');
+        
+        // Ensure proper menu item is selected
+        const menuItems = menu.querySelectorAll('.menu-item');
+        menuItems.forEach(item => item.classList.remove('selected'));
+        menuItems[0].classList.add('selected');
+        this.menuIndex = 0;
     }
 
     saveScore() {
