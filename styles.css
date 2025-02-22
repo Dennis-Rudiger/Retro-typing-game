@@ -97,78 +97,121 @@ body {
 
 .d-pad {
     position: relative;
-    transform: scale(1.5);
-    margin-left: 20px;
+    transform: scale(1.2);
+    margin-left: 15px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
+    gap: 8px;
 }
 
 .d-pad button {
     background: linear-gradient(145deg, var(--accent), #654b46);
     color: var(--light);
     border: none;
-    width: 45px;
-    height: 45px;
-    border-radius: 8px;
+    width: 35px;
+    height: 35px;
+    border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 
-        -3px -3px 7px rgba(255, 255, 255, 0.1),
-        3px 3px 7px rgba(0, 0, 0, 0.4);
-    font-size: 1.4rem;
+        -2px -2px 5px rgba(255, 255, 255, 0.1),
+        2px 2px 5px rgba(0, 0, 0, 0.4),
+        inset 1px 1px 2px rgba(255, 255, 255, 0.2);
+    font-size: 1.1rem;
     display: flex;
     align-items: center;
     justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.d-pad button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    background: linear-gradient(to bottom, 
+        rgba(255, 255, 255, 0.2) 0%, 
+        transparent 100%);
+    pointer-events: none;
 }
 
 .d-pad button:active {
     background: linear-gradient(145deg, #654b46, var(--accent));
-    transform: scale(0.95);
+    transform: scale(0.92);
     box-shadow: 
-        inset -3px -3px 7px rgba(255, 255, 255, 0.1),
-        inset 3px 3px 7px rgba(0, 0, 0, 0.4);
+        inset -2px -2px 5px rgba(0, 0, 0, 0.4),
+        inset 2px 2px 5px rgba(0, 0, 0, 0.4);
 }
 
 .action-buttons {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    margin-right: 20px;
+    gap: 12px;
+    margin-right: 15px;
 }
 
 .action-buttons button {
-    background: linear-gradient(145deg, var(--highlight), #e6cc12);
-    border: none;
-    width: 70px;
-    height: 70px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.1);
     cursor: pointer;
     transition: all 0.2s ease;
-    box-shadow: 
-        -5px -5px 10px rgba(255, 255, 255, 0.1),
-        5px 5px 10px rgba(0, 0, 0, 0.4);
-    font-size: 1.4rem;
+    font-size: 1.1rem;
     font-weight: bold;
-    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+}
+
+#select-btn {
+    background: linear-gradient(145deg, var(--highlight), #e6cc12);
     color: #333;
+    box-shadow: 
+        -2px -2px 6px rgba(255, 255, 255, 0.2),
+        2px 2px 6px rgba(0, 0, 0, 0.3),
+        inset 1px 1px 2px rgba(255, 255, 255, 0.4);
 }
 
 #back-btn {
     background: linear-gradient(145deg, var(--accent), #654b46);
     color: var(--light);
+    box-shadow: 
+        -2px -2px 6px rgba(255, 255, 255, 0.1),
+        2px 2px 6px rgba(0, 0, 0, 0.3),
+        inset 1px 1px 2px rgba(255, 255, 255, 0.2);
 }
 
 #contact-btn {
     background: linear-gradient(145deg, var(--primary), #367881);
     color: var(--light);
+    box-shadow: 
+        -2px -2px 6px rgba(255, 255, 255, 0.1),
+        2px 2px 6px rgba(0, 0, 0, 0.3),
+        inset 1px 1px 2px rgba(255, 255, 255, 0.2);
+}
+
+.action-buttons button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40%;
+    background: linear-gradient(to bottom, 
+        rgba(255, 255, 255, 0.3) 0%, 
+        transparent 100%);
+    pointer-events: none;
+    border-radius: 50% 50% 0 0;
 }
 
 .action-buttons button:active {
     transform: scale(0.92);
     box-shadow: 
-        inset -5px -5px 10px rgba(255, 255, 255, 0.1),
-        inset 5px 5px 10px rgba(0, 0, 0, 0.4);
+        inset -2px -2px 6px rgba(0, 0, 0, 0.3),
+        inset 2px 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .hidden {
@@ -446,12 +489,12 @@ body {
     }
 
     .action-buttons button {
-        width: 60px; /* Reduced from 70px */
-        height: 60px;
+        width: 45px;
+        height: 45px;
     }
 
     .d-pad {
-        transform: scale(1.3); /* Reduced from 1.5 */
+        transform: scale(1.1);
     }
 
     #contact-form {
@@ -479,13 +522,15 @@ body {
     }
 
     .action-buttons button {
-        width: 55px;
-        height: 55px;
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
     }
 
     .d-pad button {
-        width: 40px;
-        height: 40px;
+        width: 30px;
+        height: 30px;
+        font-size: 1rem;
     }
 
     #word-input {
