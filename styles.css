@@ -1,0 +1,170 @@
+:root {
+    --primary: #4497a1;
+    --secondary: #223382;
+    --neutral: #a6a19b;
+    --light: #e2e4e7;
+    --accent: #795953;
+    --highlight: #ffe314;
+}
+
+@font-face {
+    font-family: 'RetroFont';
+    src: url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: var(--light);
+    font-family: 'Courier New', monospace;
+}
+
+.gameboy {
+    background-color: var(--neutral);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
+    width: 400px;
+}
+
+.screen-container {
+    background-color: var(--secondary);
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.screen {
+    background-color: var(--light);
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+    padding: 10px;
+}
+
+.game-area {
+    height: 100%;
+    position: relative;
+}
+
+.word {
+    position: absolute;
+    color: var(--secondary);
+    transition: all 0.3s;
+}
+
+.menu ul {
+    list-style: none;
+    padding: 0;
+}
+
+.menu li {
+    padding: 10px;
+    color: var(--blue);
+}
+
+.menu li.selected {
+    background-color: var(--yellow);
+}
+
+.controls {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.d-pad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+}
+
+.d-pad button {
+    background-color: var(--accent);
+    color: var(--light);
+    border: none;
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+    transition: background-color 0.1s;
+}
+
+.d-pad button:active {
+    background-color: var(--primary);
+    transform: scale(0.95);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.action-buttons button {
+    background-color: var(--highlight);
+    border: none;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+#back-btn {
+    background-color: var(--accent);
+}
+
+.action-buttons button:active {
+    transform: scale(0.95);
+}
+
+.hidden {
+    display: none;
+}
+
+#word-input {
+    position: absolute;
+    bottom: 10px;
+    width: 90%;
+    padding: 5px;
+    margin: 0 5%;
+}
+
+#stats {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 14px;
+}
+
+.section {
+    padding: 15px;
+    transition: all 0.3s ease;
+}
+
+.section h2 {
+    color: var(--secondary);
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: 'RetroFont', monospace;
+}
+
+.menu-item {
+    padding: 10px;
+    margin: 5px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.menu-item.selected {
+    background-color: var(--primary);
+    color: var(--light);
+    padding-left: 20px;
+}
+
+.active {
+    border: 2px solid var(--highlight);
+    border-radius: 5px;
+}
