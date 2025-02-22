@@ -104,17 +104,24 @@ class TypingGame {
     }
 
     startGame() {
-        document.getElementById('menu').classList.remove('active');
-        document.getElementById('menu').classList.add('hidden');
-        document.getElementById('game-area').classList.remove('hidden');
-        this.isPlaying = true;
-        this.score = 0;
-        this.lives = 3;
-        document.getElementById('score').textContent = `Score: ${this.score}`;
-        document.getElementById('lives').textContent = `Lives: ${this.lives}`;
-        document.getElementById('word-input').focus();
-        this.usedWords.clear();
-        this.spawnWords();
+        const gameArea = document.getElementById('game-area');
+        gameArea.classList.add('loading');
+        
+        // Simulate loading game assets
+        setTimeout(() => {
+            gameArea.classList.remove('loading');
+            document.getElementById('menu').classList.remove('active');
+            document.getElementById('menu').classList.add('hidden');
+            document.getElementById('game-area').classList.remove('hidden');
+            this.isPlaying = true;
+            this.score = 0;
+            this.lives = 3;
+            document.getElementById('score').textContent = `Score: ${this.score}`;
+            document.getElementById('lives').textContent = `Lives: ${this.lives}`;
+            document.getElementById('word-input').focus();
+            this.usedWords.clear();
+            this.spawnWords();
+        }, 1000);
     }
 
     spawnWords() {
@@ -340,18 +347,33 @@ class TypingGame {
         const form = e.target;
         const submitBtn = form.querySelector('.submit-btn');
         
-        // Disable button during submission
+        submitBtn.classList.add('loading');
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Sending...';
-        
-        // Simulate sending (replace with actual API call)
+
+        // Simulate API call
         setTimeout(() => {
-            alert('Thank you for your message! I will get back to you soon.');
-            form.reset();
-            submitBtn.disabled = false;
-            submitBtn.textContent = 'Send Message';
-            this.goBack();
-        }, 1000);
+            try {
+                alert('Thank you for your message! I will get back to you soon.');
+                form.reset();
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+                this.goBack();
+            } catch (error) {
+                this.handleError(error);
+                submitBtn.classList.remove('loading');
+                submitBtn.disabled = false;
+            }
+        }, 1500);
+    }
+
+    handleError(error) {
+        console.error('Game Error:', error);
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.textContent = 'Oops! Something went wrong. Please try again.';
+        document.querySelector('.screen').appendChild(errorDiv);
+        
+        setTimeout(() => errorDiv.remove(), 3000);
     }
 }
 
