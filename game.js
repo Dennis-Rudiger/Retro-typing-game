@@ -1,7 +1,15 @@
 const wordLists = {
-    easy: ['cat', 'dog', 'run', 'jump', 'play', 'fun', 'hat', 'ball', 'skip', 'hop', 'sing', 'dance'],
-    medium: ['dragon', 'monkey', 'pencil', 'purple', 'castle', 'forest', 'window', 'summer', 'winter', 'stream'],
-    hard: ['butterfly', 'chocolate', 'adventure', 'dangerous', 'beautiful', 'mysterious', 'incredible', 'fascinating', 'wonderful', 'extraordinary']
+    easy: ['cat', 'dog', 'run', 'jump', 'play', 'fun', 'hat', 'ball', 'skip', 'hop', 'sing', 'dance',
+           'book', 'pen', 'cup', 'sun', 'moon', 'star', 'fish', 'bird', 'door', 'tree', 'leaf', 'rain',
+           'snow', 'wind', 'fire', 'milk', 'cake', 'bike', 'ship', 'boat', 'kite', 'gift', 'song'],
+    
+    medium: ['dragon', 'monkey', 'pencil', 'purple', 'castle', 'forest', 'window', 'summer', 'winter', 'stream',
+             'garden', 'island', 'mirror', 'flower', 'desert', 'sunset', 'rocket', 'bridge', 'planet', 'camera',
+             'coffee', 'orange', 'rabbit', 'puzzle', 'sunset', 'breeze', 'market', 'silver', 'turtle', 'guitar'],
+    
+    hard: ['butterfly', 'chocolate', 'adventure', 'dangerous', 'beautiful', 'mysterious', 'incredible', 'fascinating',
+          'wonderful', 'extraordinary', 'passionate', 'challenge', 'knowledge', 'mountains', 'discovery', 'symphony',
+          'technology', 'atmosphere', 'creativity', 'imagination', 'experience', 'development', 'celebration']
 };
 
 const difficultySettings = {
@@ -26,6 +34,12 @@ class TypingGame {
         this.addKeyboardControls();
         this.usedWords = new Set();
         this.gameOverIndex = 0;
+        this.fetchedWords = {
+            easy: [],
+            medium: [],
+            hard: []
+        };
+        this.initializeWordLists();
     }
 
     initializeControls() {
@@ -121,6 +135,7 @@ class TypingGame {
             document.getElementById('word-input').focus();
             this.usedWords.clear();
             this.spawnWords();
+            this.fetchMoreWords();
         }, 1000);
     }
 
@@ -182,8 +197,35 @@ class TypingGame {
         }
     }
 
+    async initializeWordLists() {
+        try {
+            // Fetch more words from an API
+            const response = await fetch('https://random-word-api.herokuapp.com/word?number=50');
+            const words = await response.json();
+            
+            // Categorize words by length
+            words.forEach(word => {
+                if (word.length <= 4) {
+                    this.fetchedWords.easy.push(word);
+                } else if (word.length <= 7) {
+                    this.fetchedWords.medium.push(word);
+                } else {
+                    this.fetchedWords.hard.push(word);
+                }
+            });
+        } catch (error) {
+            console.log('Using fallback word lists:', error);
+        }
+    }
+
     getRandomWord() {
-        const words = wordLists[this.currentDifficulty];
+        const words = [...wordLists[this.currentDifficulty]];
+        
+        // Add fetched words if available
+        if (this.fetchedWords[this.currentDifficulty].length > 0) {
+            words.push(...this.fetchedWords[this.currentDifficulty]);
+        }
+        
         const availableWords = words.filter(word => !this.usedWords.has(word));
         
         // Reset used words if all words have been used
@@ -195,6 +237,26 @@ class TypingGame {
         const word = availableWords[Math.floor(Math.random() * availableWords.length)];
         this.usedWords.add(word);
         return word;
+    }
+
+    async fetchMoreWords() {
+        try {
+            const response = await fetch('https://random-word-api.herokuapp.com/word?number=20');
+            const newWords = await response.json();
+            
+            // Categorize and add new words
+            newWords.forEach(word => {
+                if (word.length <= 4) {
+                    this.fetchedWords.easy.push(word);
+                } else if (word.length <= 7) {
+                    this.fetchedWords.medium.push(word);
+                } else {
+                    this.fetchedWords.hard.push(word);
+                }
+            });
+        } catch (error) {
+            console.error('Error fetching more words:', error);
+        }
     }
 
     getRandomSpeed() {
