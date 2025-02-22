@@ -317,34 +317,41 @@ class TypingGame {
     }
 
     showContactForm() {
-        this.cleanupGame();
+        // Hide all other sections
         document.querySelectorAll('.section').forEach(section => {
             section.classList.add('hidden');
             section.classList.remove('active');
         });
+        
+        // Show and animate contact form
         const contactForm = document.getElementById('contact-form');
         contactForm.classList.remove('hidden');
-        contactForm.classList.add('active');
+        // Small delay to trigger animation
+        setTimeout(() => {
+            contactForm.classList.add('active');
+        }, 50);
+        
+        // Focus on first input
+        document.getElementById('name').focus();
     }
 
     handleFormSubmit(e) {
         e.preventDefault();
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const message = document.getElementById('message').value;
-
-        // Here you would typically send this data to a server
-        // For now, we'll just log it and show a success message
-        console.log('Form submitted:', { name, email, message });
-
-        // Show success message
-        alert('Thank you for your message! I will get back to you soon.');
+        const form = e.target;
+        const submitBtn = form.querySelector('.submit-btn');
         
-        // Clear form
-        e.target.reset();
+        // Disable button during submission
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending...';
         
-        // Return to main menu
-        this.goBack();
+        // Simulate sending (replace with actual API call)
+        setTimeout(() => {
+            alert('Thank you for your message! I will get back to you soon.');
+            form.reset();
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send Message';
+            this.goBack();
+        }, 1000);
     }
 }
 
