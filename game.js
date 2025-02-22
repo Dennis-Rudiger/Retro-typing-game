@@ -1,7 +1,13 @@
 const wordLists = {
-    easy: ['cat', 'dog', 'run', 'jump', 'play', 'fun'],
-    medium: ['dragon', 'monkey', 'pencil', 'purple', 'castle'],
-    hard: ['butterfly', 'chocolate', 'adventure', 'dangerous', 'beautiful']
+    easy: ['cat', 'dog', 'run', 'jump', 'play', 'fun', 'hat', 'ball', 'skip', 'hop', 'sing', 'dance'],
+    medium: ['dragon', 'monkey', 'pencil', 'purple', 'castle', 'forest', 'window', 'summer', 'winter', 'stream'],
+    hard: ['butterfly', 'chocolate', 'adventure', 'dangerous', 'beautiful', 'mysterious', 'incredible', 'fascinating', 'wonderful', 'extraordinary']
+};
+
+const difficultySettings = {
+    easy: { minSpeed: 0.3, maxSpeed: 0.8, spawnRate: 2500 },
+    medium: { minSpeed: 0.5, maxSpeed: 1.2, spawnRate: 2000 },
+    hard: { minSpeed: 0.8, maxSpeed: 1.8, spawnRate: 1500 }
 };
 
 class TypingGame {
@@ -15,17 +21,50 @@ class TypingGame {
         this.difficultyIndex = 0;
         this.difficulties = ['easy', 'medium', 'hard'];
         this.initializeControls();
+        this.spawnInterval = null;
+        this.animationInterval = null;
+        this.addKeyboardControls();
+        this.usedWords = new Set();
+        this.gameOverIndex = 0;
     }
 
     initializeControls() {
         document.getElementById('up').addEventListener('click', () => this.navigateMenu(-1));
         document.getElementById('down').addEventListener('click', () => this.navigateMenu(1));
-        document.getElementById('select-btn').addEventListener('click', () => this.selectMenuItem());
+        document.getElementById('select-btn').addEventListener('click', () => {
+            if (document.querySelector('.game-over')) {
+                this.handleGameOverSelection();
+            } else {
+                this.selectMenuItem();
+            }
+        });
         document.getElementById('back-btn').addEventListener('click', () => this.goBack());
         document.getElementById('word-input').addEventListener('input', (e) => this.checkWord(e.target.value));
     }
 
+    addKeyboardControls() {
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowUp') {
+                this.navigateMenu(-1);
+            } else if (e.key === 'ArrowDown') {
+                this.navigateMenu(1);
+            } else if (e.key === 'Enter') {
+                this.selectMenuItem();
+            } else if (e.key === 'Escape') {
+                this.goBack();
+            }
+        });
+    }
+
     navigateMenu(direction) {
+        if (document.querySelector('.game-over')) {
+            const menuItems = document.querySelectorAll('.game-over .menu-item');
+            menuItems[this.gameOverIndex].classList.remove('selected');
+            this.gameOverIndex = (this.gameOverIndex + direction + menuItems.length) % menuItems.length;
+            menuItems[this.gameOverIndex].classList.add('selected');
+            return;
+        }
+
         if (document.getElementById('difficulty-select').classList.contains('active')) {
             this.navigateDifficulty(direction);
         } else {
@@ -67,11 +106,18 @@ class TypingGame {
         document.getElementById('menu').classList.add('hidden');
         document.getElementById('game-area').classList.remove('hidden');
         this.isPlaying = true;
+        this.score = 0;
+        this.lives = 3;
+        document.getElementById('score').textContent = `Score: ${this.score}`;
+        document.getElementById('lives').textContent = `Lives: ${this.lives}`;
+        document.getElementById('word-input').focus();
+        this.usedWords.clear();
         this.spawnWords();
     }
 
     spawnWords() {
-        setInterval(() => {
+        const settings = difficultySettings[this.currentDifficulty];
+        this.spawnInterval = setInterval(() => {
             if (this.isPlaying) {
                 const word = this.getRandomWord();
                 const wordElement = document.createElement('div');
@@ -87,13 +133,13 @@ class TypingGame {
                     speed: this.getRandomSpeed()
                 });
             }
-        }, 2000);
+        }, settings.spawnRate);
 
         this.startWordAnimation();
     }
 
     startWordAnimation() {
-        setInterval(() => {
+        this.animationInterval = setInterval(() => {
             this.activeWords.forEach((wordObj, index) => {
                 const currentTop = parseFloat(wordObj.element.style.top);
                 wordObj.element.style.top = `${currentTop + wordObj.speed}px`;
@@ -129,18 +175,96 @@ class TypingGame {
 
     getRandomWord() {
         const words = wordLists[this.currentDifficulty];
-        return words[Math.floor(Math.random() * words.length)];
+        const availableWords = words.filter(word => !this.usedWords.has(word));
+        
+        // Reset used words if all words have been used
+        if (availableWords.length === 0) {
+            this.usedWords.clear();
+            return words[Math.floor(Math.random() * words.length)];
+        }
+        
+        const word = availableWords[Math.floor(Math.random() * availableWords.length)];
+        this.usedWords.add(word);
+        return word;
     }
 
     getRandomSpeed() {
-        return 0.5 + Math.random() * 1.5;
+        const settings = difficultySettings[this.currentDifficulty];
+        return settings.minSpeed + Math.random() * (settings.maxSpeed - settings.minSpeed);
     }
 
     gameOver() {
         this.isPlaying = false;
-        alert(`Game Over! Final Score: ${this.score}`);
+        clearInterval(this.spawnInterval);
+        clearInterval(this.animationInterval);
+        this.usedWords.clear();
+        this.gameOverIndex = 0;
+        
+        const gameArea = document.getElementById('game-area');
+        const gameOverScreen = document.createElement('div');
+        gameOverScreen.className = 'game-over';
+        gameOverScreen.innerHTML = `
+            <h2>Game Over!</h2>
+            <p>Final Score: ${this.score}</p>
+            <div class="menu-item selected">Play Again</div>
+            <div class="menu-item">Main Menu</div>
+        `;
+        
+        gameArea.appendChild(gameOverScreen);
+        
         this.saveScore();
-        location.reload();
+    }
+
+    handleGameOverSelection() {
+        const menuItems = document.querySelectorAll('.game-over .menu-item');
+        if (menuItems[this.gameOverIndex].textContent === 'Play Again') {
+            location.reload();
+        } else {
+            this.cleanupGame();
+            this.goBack();
+            document.querySelector('.game-over').remove();
+        }
+    }
+
+    cleanupGame() {
+        // Clear all game state
+        this.isPlaying = false;
+        this.score = 0;
+        this.lives = 3;
+        this.usedWords.clear();
+        this.activeWords = [];
+        
+        // Clear intervals
+        clearInterval(this.spawnInterval);
+        clearInterval(this.animationInterval);
+        
+        // Clear DOM elements
+        const wordsContainer = document.getElementById('words-container');
+        while (wordsContainer.firstChild) {
+            wordsContainer.removeChild(wordsContainer.firstChild);
+        }
+        
+        // Reset input
+        const input = document.getElementById('word-input');
+        input.value = '';
+        
+        // Reset stats display
+        document.getElementById('score').textContent = 'Score: 0';
+        document.getElementById('lives').textContent = 'Lives: 3';
+    }
+
+    goBack() {
+        if (this.isPlaying) {
+            this.cleanupGame();
+        }
+        
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.add('hidden');
+            section.classList.remove('active');
+        });
+        
+        document.getElementById('menu').classList.remove('hidden');
+        document.getElementById('menu').classList.add('active');
     }
 
     saveScore() {
@@ -172,25 +296,6 @@ class TypingGame {
         difficultyItems.forEach(item => item.classList.remove('selected'));
         this.difficultyIndex = this.difficulties.indexOf(this.currentDifficulty);
         difficultyItems[this.difficultyIndex].classList.add('selected');
-    }
-
-    goBack() {
-        document.querySelectorAll('.section').forEach(section => {
-            section.classList.add('hidden');
-            section.classList.remove('active');
-        });
-        
-        document.getElementById('menu').classList.remove('hidden');
-        document.getElementById('menu').classList.add('active');
-        
-        // Reset game if it's running
-        if (this.isPlaying) {
-            this.isPlaying = false;
-            this.score = 0;
-            this.lives = 3;
-            this.activeWords.forEach(wordObj => wordObj.element.remove());
-            this.activeWords = [];
-        }
     }
 }
 
