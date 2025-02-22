@@ -40,6 +40,8 @@ class TypingGame {
         });
         document.getElementById('back-btn').addEventListener('click', () => this.goBack());
         document.getElementById('word-input').addEventListener('input', (e) => this.checkWord(e.target.value));
+        document.getElementById('contact-btn').addEventListener('click', () => this.showContactForm());
+        document.getElementById('collaboration-form').addEventListener('submit', (e) => this.handleFormSubmit(e));
     }
 
     addKeyboardControls() {
@@ -312,6 +314,37 @@ class TypingGame {
         difficultyItems.forEach(item => item.classList.remove('selected'));
         this.difficultyIndex = this.difficulties.indexOf(this.currentDifficulty);
         difficultyItems[this.difficultyIndex].classList.add('selected');
+    }
+
+    showContactForm() {
+        this.cleanupGame();
+        document.querySelectorAll('.section').forEach(section => {
+            section.classList.add('hidden');
+            section.classList.remove('active');
+        });
+        const contactForm = document.getElementById('contact-form');
+        contactForm.classList.remove('hidden');
+        contactForm.classList.add('active');
+    }
+
+    handleFormSubmit(e) {
+        e.preventDefault();
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const message = document.getElementById('message').value;
+
+        // Here you would typically send this data to a server
+        // For now, we'll just log it and show a success message
+        console.log('Form submitted:', { name, email, message });
+
+        // Show success message
+        alert('Thank you for your message! I will get back to you soon.');
+        
+        // Clear form
+        e.target.reset();
+        
+        // Return to main menu
+        this.goBack();
     }
 }
 
