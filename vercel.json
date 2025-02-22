@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "name": "retro-typing-game",
+  "builds": [
+    {
+      "src": "**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(.+)",
+      "dest": "/$1"
+    }
+  ],
+  "public": true
+}

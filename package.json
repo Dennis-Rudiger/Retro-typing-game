@@ -1,0 +1,17 @@
+{
+  "name": "retro-typing-game",
+  "version": "1.0.0",
+  "description": "A retro-styled typing game",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve .",
+    "build": "cp -r * dist/ || xcopy /E /I . dist\\",
+    "deploy": "vercel --prod"
+  },
+  "keywords": ["game", "typing", "retro"],
+  "author": "Dennis Rudiger",
+  "license": "MIT",
+  "devDependencies": {
+    "serve": "^14.0.0"
+  }
+}
